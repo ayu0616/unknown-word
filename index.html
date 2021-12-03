@@ -11,22 +11,32 @@
 </head>
 
 <body>
-    <h2>検索欄</h2>
-    <form id="word-form" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdpDAP-WcE-aWdr8r4PDyjIHcGIeCAYRBUBHHO2jpW2jDXpbg/formResponse?embedded=true" method="POST" target="dummy-iframe">
-        <input id="form-input" type="text" name="entry.395067924">
-        <button id="search-btn" class="btn btn-primary" type="button" onclick="onClick()">検索</button>
-        <iframe name="dummy-iframe" class="d-none" style="display:none;"></iframe>
-    </form>
+    <div id="main-container" class="mx-auto">
+        <div id="serch-container" class="m-3 p-3 border rounded">
+            <h2>検索欄</h2>
+            <form id="word-form" class="row" autocomplete="off" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdpDAP-WcE-aWdr8r4PDyjIHcGIeCAYRBUBHHO2jpW2jDXpbg/formResponse?embedded=true" method="POST" target="dummy-iframe">
+                <div class="input-group">
+                    <input id="form-input" class="form-control form-control-lg" type="text" name="entry.395067924" placeholder="検索したい単語を入力してください">
+                    <button id="search-btn" class="btn btn-primary" type="button" onclick="onClick()">検索</button>
+                </div>
+                <iframe name="dummy-iframe" class="d-none" style="display:none;"></iframe>
+            </form>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>単語</th>
-                <th>追加日</th>
-            </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-    </table>
+        <div id="word-container" class="m-3 p-3 border rounded">
+            <h2>復習コーナー</h2>
+            <table class="table table-bordered m-0">
+                <thead>
+                    <tr class="table-warning">
+                        <th>単語</th>
+                        <th>追加日</th>
+                        <th>最終復習日</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

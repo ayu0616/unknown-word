@@ -1,20 +1,25 @@
+// フォームを送信する
 function formSubmit() {
     $("#word-form").submit();
 }
 
+// Googleの検索欄を開く
 function openGoogle() {
     const searchWord = $("#form-input").val();
+    const url = `https://www.google.com/search?q=${searchWord} とは`;
+    window.open(url);
+}
+
+// 「送信」ボタンを押したときの動作
+function onClick() {
+    const searchWord = $("#form-input").val();
     if (searchWord) {
-        const url = `https://www.google.com/search?q=${searchWord}`;
-        window.open(url);
+        formSubmit();
+        openGoogle();
     }
 }
 
-function onClick() {
-    formSubmit();
-    openGoogle();
-}
-
+// フォームの回答をtableに転記する
 $(async function () {
     const sheetId = "1S6AIMQn1g1oX4va__mO0SdPrt4iFLoTUJFZKRHUD91M";
     const sheetName = "フォームの回答 1";
@@ -26,7 +31,7 @@ $(async function () {
             const tr = $('<tr></tr>')
 
             const word = value[1]
-            const url = `https://www.google.com/search?q=${word}`
+            const url = `https://www.google.com/search?q=${word} とは`
             const wordTd = $('<td></td>')
             const wordA = $("<a></a>", {
                 text: word,
@@ -35,12 +40,16 @@ $(async function () {
             wordTd.append(wordA)
 
 
-            const time = value[0]
-            const timeTd = $("<td></td>", {
-                text: time,
+            const firstTime = value[0]
+            const firstTimeTd = $("<td></td>", {
+                text: firstTime,
             });
 
-            tr.append(wordTd, timeTd)
+            const lastTimeTd = $('<td></td>', {
+                text: "-"
+            })
+
+            tr.append(wordTd, firstTimeTd, lastTimeTd)
             $('#tbody').append(tr)
         })
     })
