@@ -1,11 +1,10 @@
 // フォームを送信する
-function formSubmit() {
-    $("#word-form").submit();
+async function formSubmit() {
+    await $("#word-form").submit();
 }
 
 // Googleの検索欄を開く
-function openGoogle() {
-    const searchWord = $("#form-input").val();
+function openGoogle(searchWord) {
     const url = `https://www.google.com/search?q=${searchWord} とは`;
     window.open(url);
 }
@@ -15,7 +14,8 @@ function onClick() {
     const searchWord = $("#form-input").val();
     if (searchWord) {
         formSubmit();
-        openGoogle();
+        openGoogle(searchWord);
+        $("#form-input").val('');
     }
 }
 
@@ -25,32 +25,69 @@ $(async function () {
     const sheetName = "フォームの回答 1";
     const apiKey = "AIzaSyBh6fWBIDR8nZvucod3Fe77Ro4Hd3xtjO8";
     const jsonUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${apiKey}`;
-    await $.getJSON(jsonUrl, function (data) {
+    await $.getJSON(jsonUrl, async function (data) {
         const wordList = data.values.slice(1);
         wordList.forEach(function (value) {
-            const tr = $('<tr></tr>')
+            const tr = $("<tr></tr>");
 
-            const word = value[1]
-            const url = `https://www.google.com/search?q=${word} とは`
-            const wordTd = $('<td></td>')
-            const wordA = $("<a></a>", {
+            const word = value[1];
+            const wordTd = $("<td></td>", {
                 text: word,
-                href: url
+                class: "learned-word link-primary text-decoration-underline",
             });
-            wordTd.append(wordA)
 
-
-            const firstTime = value[0]
+            const firstTime = value[0];
             const firstTimeTd = $("<td></td>", {
                 text: firstTime,
             });
 
-            const lastTimeTd = $('<td></td>', {
-                text: "-"
-            })
+            const lastTimeTd = $("<td></td>", {
+                text: "-",
+                class: "last-time",
+            });
 
-            tr.append(wordTd, firstTimeTd, lastTimeTd)
-            $('#tbody').append(tr)
-        })
-    })
+            writeLastTime(word, lastTimeTd);
+
+            tr.append(wordTd, firstTimeTd, lastTimeTd);
+            $("#tbody").append(tr);
+        });
+    });
 });
+
+// 復習リンクをクリックしたときの動作
+$(document).on("click", ".learned-word", function () {
+    // フォームのinputに転記
+    const word = $(this).text();
+    $("#review-word").val(word);
+
+    // フォームを送信
+    $("#review-form").submit();
+
+    // 検索ページを開く
+    const url = `https://www.google.com/search?q=${word} とは`;
+    window.open(url);
+});
+
+// 復習記録をtableに転記
+async function writeLastTime(learnedWord, lastTimeElem) {
+    const sheetId = "1S6AIMQn1g1oX4va__mO0SdPrt4iFLoTUJFZKRHUD91M";
+    const sheetName = "復習記録";
+    const apiKey = "AIzaSyBh6fWBIDR8nZvucod3Fe77Ro4Hd3xtjO8";
+    const jsonUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${apiKey}`;
+    await $.getJSON(jsonUrl, function (data) {
+        // 先頭は見出しなのでそれ以外を抽出
+        const reviewList = data.values.slice(1);
+
+        // 表中の各単語に対して、復習記録内に合致する単語を検索
+        $.each(reviewList, function (_, value) {
+            const word = value[1];
+            if (word == learnedWord) {
+                const time = value[0];
+                // 最終復習日を記入
+                lastTimeElem.text(time);
+                // breakと同じ役割
+                return false;
+            }
+        });
+    });
+}
